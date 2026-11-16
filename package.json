@@ -1,0 +1,35 @@
+{
+  "name": "fridge-chef",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "test": "tsx tests/run.ts"
+  },
+  "dependencies": {
+    "@clerk/nextjs": "^7.0.0",
+    "@huggingface/inference": "^4.0.0",
+    "@pinecone-database/pinecone": "^9.1.0",
+    "@supabase/supabase-js": "^2.45.0",
+    "drizzle-orm": "^0.44.0",
+    "next": "^16.0.0",
+    "postgres": "^3.4.4",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "server-only": "^0.0.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.0.0",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "drizzle-kit": "^0.31.0",
+    "tailwindcss": "^4.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}

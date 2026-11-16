@@ -1,0 +1,117 @@
+{
+  "name": "Fridge Chef - nightly recipe import",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 3 * * *"
+            }
+          ]
+        }
+      },
+      "id": "d95a6bfb-05fb-45f4-825e-d9f34c7f62a9",
+      "name": "Every night 03:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// One item per random recipe we want to fetch\nreturn Array.from({ length: 10 }, (_, i) => ({ json: { n: i } }));"
+      },
+      "id": "ed934ad3-ac8a-47a6-8a12-ec21b0a25b90",
+      "name": "Make 10 items",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.themealdb.com/api/json/v1/1/random.php",
+        "options": {}
+      },
+      "id": "50186857-ac8c-46aa-867a-aa0c4674c552",
+      "name": "Get random recipe (TheMealDB)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://YOUR-APP.vercel.app/api/ingest",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-n8n-secret",
+              "value": "PASTE_YOUR_N8N_SECRET"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ meals: $json.meals }) }}",
+        "options": {}
+      },
+      "id": "c848011d-02d2-42a4-b819-31f9048f2a3b",
+      "name": "Send to Fridge Chef /api/ingest",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        680,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Every night 03:00": {
+      "main": [
+        [
+          {
+            "node": "Make 10 items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make 10 items": {
+      "main": [
+        [
+          {
+            "node": "Get random recipe (TheMealDB)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get random recipe (TheMealDB)": {
+      "main": [
+        [
+          {
+            "node": "Send to Fridge Chef /api/ingest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

@@ -1,0 +1,108 @@
+{
+  "name": "Fridge Chef - recipe of the day to Facebook",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * *"
+            }
+          ]
+        }
+      },
+      "id": "f03067e8-5b88-40e6-ac44-db0c380e0d6a",
+      "name": "Every day 09:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://YOUR-APP.vercel.app/api/recipe-of-the-day",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-n8n-secret",
+              "value": "PASTE_YOUR_N8N_SECRET"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0ac9f122-96b6-4e77-a2d2-736646afd31f",
+      "name": "Ask Fridge Chef for today's recipe",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v26.0/PASTE_YOUR_PAGE_ID/photos",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "url",
+              "value": "={{ $json.imageUrl }}"
+            },
+            {
+              "name": "caption",
+              "value": "={{ $json.caption }}"
+            },
+            {
+              "name": "access_token",
+              "value": "PASTE_YOUR_PAGE_ACCESS_TOKEN"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "86862611-fe9c-4b3b-a836-e77bf99c62e2",
+      "name": "Post photo to Facebook Page",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        500,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Every day 09:00": {
+      "main": [
+        [
+          {
+            "node": "Ask Fridge Chef for today's recipe",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ask Fridge Chef for today's recipe": {
+      "main": [
+        [
+          {
+            "node": "Post photo to Facebook Page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
